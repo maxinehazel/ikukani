@@ -10,7 +10,7 @@ import (
 
 func main() {
 	ikukani.Token = os.Getenv("WK_TOKEN")
-	resp, err := ikukani.Summary()
+	resp, err := ikukani.NextReviewsAt()
 	if err != nil {
 		log.Fatal(err)
 	}
