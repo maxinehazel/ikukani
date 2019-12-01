@@ -1,0 +1,3 @@
+# ikukani
+
+WaniKani Go Client
