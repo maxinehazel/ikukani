@@ -10,10 +10,12 @@ import (
 
 func main() {
 	ikukani.Token = os.Getenv("WK_TOKEN")
-	resp, err := ikukani.NextReviewsAt()
+	resp, err := ikukani.ReviewAvailable()
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	fmt.Println(resp)
+	if resp == true {
+		fmt.Println(resp)
+	}
 }
