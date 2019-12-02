@@ -2,6 +2,7 @@ package ikukani
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"time"
@@ -26,8 +27,11 @@ type Summary struct {
 	NextReviewsAt string `json:"next_reviews_at"`
 }
 
-// GetSummary returns the summary data for a user
-func GetSummary() (Summary, error) {
+func getSummary() (Summary, error) {
+	if Token == "" {
+		return Summary{}, fmt.Errorf("API token needs to be set")
+	}
+
 	client := &http.Client{}
 	req, err := http.NewRequest("GET", "https://api.wanikani.com/v2/summary", nil)
 	if err != nil {
@@ -56,27 +60,41 @@ func GetSummary() (Summary, error) {
 	return r.Data, nil
 }
 
-// NextReviewsAt for current user
-func NextReviewsAt() (string, error) {
-	summary, err := GetSummary()
+func nextReviewsAt() (time.Time, error) {
+	summary, err := getSummary()
+	if err != nil {
+		return time.Time{}, err
+	}
+	t, err := time.Parse(time.RFC3339, summary.NextReviewsAt)
+	if err != nil {
+		return time.Time{}, err
+	}
+	return t, nil
+
+}
+
+// NextReviewIn returns the time until next review, in string format
+func NextReviewIn() (string, error) {
+	if a, _ := ReviewAvailable(); a {
+		return "Review available now", nil
+	}
+
+	t, err := nextReviewsAt()
 	if err != nil {
 		return "", err
 	}
-	t, _ := time.Parse(time.RFC3339, summary.NextReviewsAt)
-	u := time.Until(t)
-	return u.Round(time.Minute).String(), err
+
+	d := time.Until(t)
+	return "Next Review in " + d.Round(time.Minute).String(), nil
 }
 
 // ReviewAvailable checks to see if there is a current review available.
 func ReviewAvailable() (bool, error) {
-	summary, err := GetSummary()
+	t, err := nextReviewsAt()
 	if err != nil {
 		return false, err
 	}
-	t, err := time.Parse(time.RFC3339, summary.NextReviewsAt)
-	if err != nil {
-		return false, err
-	}
+
 	t = t.Round(time.Minute)
 	n := time.Now().Round(time.Minute)
 	return t.Before(n), nil
