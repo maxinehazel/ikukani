@@ -19,6 +19,18 @@ var (
 	rootCmd = &cobra.Command{
 		Use:   "ikukanibot",
 		Short: "cli for interfacing with the WaniKani API",
+		PersistentPreRun: func(cmd *cobra.Command, args []string) {
+			ikukani.Token = viper.GetString("wk_token")
+			vacation, err := ikukani.VacationMode()
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			if vacation {
+				fmt.Println("User on vacation")
+				os.Exit(0)
+			}
+		},
 	}
 
 	reviewCmd = &cobra.Command{
@@ -31,7 +43,6 @@ var nextReviewCmd = &cobra.Command{
 	Use:   "next",
 	Short: "Print when the next review is availabe",
 	Run: func(cmd *cobra.Command, args []string) {
-		ikukani.Token = viper.GetString("wk_token")
 		resp, err := ikukani.NextReviewIn()
 		if err != nil {
 			log.Fatal(err)
@@ -44,7 +55,6 @@ var availabeReviewCmd = &cobra.Command{
 	Use:   "available",
 	Short: "Returns is there are any available reviews",
 	Run: func(cmd *cobra.Command, args []string) {
-		ikukani.Token = viper.GetString("wk_token")
 		resp, err := ikukani.ReviewAvailable()
 		if err != nil {
 			log.Fatal(err)
@@ -57,6 +67,8 @@ var availabeReviewCmd = &cobra.Command{
 }
 
 func init() {
+	log.SetFlags(log.LstdFlags | log.Lshortfile)
+
 	cobra.OnInitialize(initConfig)
 
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.ikukani.yaml)")
