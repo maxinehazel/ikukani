@@ -24,28 +24,14 @@ type Response struct {
 	Data          map[string]interface{} `json:"data"`
 }
 
-// Object interface is generic for data types returned
-// by the wanikani api
-type Object interface {
-	dataType() string
-}
-
 // Summary struct
 type Summary struct {
 	NextReviewsAt string `mapstructure:"next_reviews_at"`
 }
 
-func (s Summary) dataType() string {
-	return "report"
-}
-
 // User struct
 type User struct {
 	CurrentVacationStartedAt string `mapstructure:"current_vacation_started_at"`
-}
-
-func (u User) dataType() string {
-	return "user"
 }
 
 type request struct {
@@ -87,41 +73,43 @@ func (r *request) send() (*Response, error) {
 	return &respStruct, nil
 }
 
-func getSummary() (Summary, error) {
+// GetSummary returns the summary struct for current user
+func GetSummary() (*Summary, error) {
 	req := request{endpoint: "/summary", method: "GET"}
 	resp, err := req.send()
 
 	if err != nil {
-		return Summary{}, err
+		return nil, err
 	}
 	var result Summary
 	err = mapstructure.Decode(resp.Data, &result)
 	if err != nil {
-		return Summary{}, err
+		return nil, err
 	}
 
-	return result, nil
+	return &result, nil
 }
 
-func getUser() (User, error) {
+// GetUser returns user struct
+func GetUser() (*User, error) {
 	req := request{endpoint: "/user", method: "GET"}
 	resp, err := req.send()
 
 	if err != nil {
-		return User{}, err
+		return nil, err
 	}
 
 	var result User
 	err = mapstructure.Decode(resp.Data, &result)
 	if err != nil {
-		return User{}, err
+		return nil, err
 	}
 
-	return result, nil
+	return &result, nil
 }
 
 func nextReviewsAt() (time.Time, error) {
-	summary, err := getSummary()
+	summary, err := GetSummary()
 	if err != nil {
 		return time.Time{}, err
 	}
@@ -163,7 +151,7 @@ func ReviewAvailable() (bool, error) {
 
 // VacationMode checks to see if vacation mode is turned on for the current user
 func VacationMode() (bool, error) {
-	user, err := getUser()
+	user, err := GetUser()
 	if err != nil {
 		return false, err
 	}
