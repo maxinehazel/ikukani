@@ -1,0 +1,34 @@
+project_name: ikukanibot
+gitea_urls:
+  api: https://git.maxinekrebs.dev/api/v1/
+  skip_tls_verify: false
+release:
+  gitea:
+    owner: softpunk
+    name: ikukani
+archives:
+  - files:
+      - none*
+    replacements:
+      darwin: macOS
+      amd64: 64-bit
+      386: 32-bit
+    name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Arch }}_{{ .Os }}"
+before:
+  hooks:
+    - go mod tidy
+    - go mod download
+builds:
+  - main: ./
+    env:
+      - CGO_ENABLED=0
+changelog:
+  filters:
+    exclude:
+      - "^docs:"
+      - "^test:"
+  sort: asc
+checksum:
+  name_template: checksums.txt
+snapshot:
+  name_template: "{{ .Tag }}-next"

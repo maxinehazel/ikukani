@@ -134,7 +134,21 @@ func NextReviewIn() (string, error) {
 	}
 
 	d := time.Until(t)
-	return "Next Review in " + d.Round(time.Minute).String(), nil
+	return d.Round(time.Minute).String(), nil
+}
+
+// NextReviewInDuration returns the time until next review, in time.Duration format
+func NextReviewInDuration() (*time.Duration, error) {
+	resp, err := NextReviewIn()
+	if err != nil {
+		return nil, err
+	}
+	duration, err := time.ParseDuration(resp)
+	if err != nil {
+		return nil, err
+	}
+
+	return &duration, nil
 }
 
 // ReviewAvailable checks to see if there is a current review available.
