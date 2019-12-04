@@ -6,7 +6,7 @@ release:
   gitea:
     owner: softpunk
     name: ikukani
-  enabled: false
+  disable: true
 archives:
   - files:
       - none*
