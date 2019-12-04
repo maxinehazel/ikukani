@@ -123,32 +123,28 @@ func nextReviewsAt() (time.Time, error) {
 }
 
 // NextReviewIn returns the time until next review, in string format
-func NextReviewIn() (string, error) {
+func NextReviewIn() (*time.Duration, error) {
 	if a, _ := ReviewAvailable(); a {
-		return "Review available now", nil
+		d := time.Until(time.Now())
+		return &d, nil
 	}
 
 	t, err := nextReviewsAt()
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	d := time.Until(t)
-	return d.Round(time.Minute).String(), nil
+	return &d, nil
 }
 
-// NextReviewInDuration returns the time until next review, in time.Duration format
-func NextReviewInDuration() (*time.Duration, error) {
-	resp, err := NextReviewIn()
+// NextReviewInString returns the time until next review, in string format rounded to the minute
+func NextReviewInString() (string, error) {
+	d, err := NextReviewIn()
 	if err != nil {
-		return nil, err
+		return "", err
 	}
-	duration, err := time.ParseDuration(resp)
-	if err != nil {
-		return nil, err
-	}
-
-	return &duration, nil
+	return d.Round(time.Minute).String(), nil
 }
 
 // ReviewAvailable checks to see if there is a current review available.
@@ -158,8 +154,7 @@ func ReviewAvailable() (bool, error) {
 		return false, err
 	}
 
-	t = t.Round(time.Minute)
-	n := time.Now().Round(time.Minute)
+	n := time.Now()
 	return t.Before(n), nil
 }
 

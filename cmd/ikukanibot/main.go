@@ -14,6 +14,12 @@ import (
 	"github.com/spf13/viper"
 )
 
+const (
+	longInterval   = time.Hour * 24
+	shortInterval  = time.Minute * 30
+	bufferInterval = time.Second * 5
+)
+
 var (
 	// Used for flags.
 	cfgFile          string
@@ -53,7 +59,7 @@ var nextReviewCmd = &cobra.Command{
 	Use:   "next",
 	Short: "Print when the next review is availabe",
 	Run: func(cmd *cobra.Command, args []string) {
-		resp, err := ikukani.NextReviewIn()
+		resp, err := ikukani.NextReviewInString()
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -88,10 +94,12 @@ var notifyReviewCmd = &cobra.Command{
 			log.Printf("RECEIVED SIGNAL: %s", s)
 			os.Exit(1)
 		}()
+
 		var waitInterval time.Duration
 		var sent bool
 		var onVacation bool
 		var err error
+
 		for {
 			onVacation, err = ikukani.VacationMode()
 			if err != nil {
@@ -100,7 +108,7 @@ var notifyReviewCmd = &cobra.Command{
 
 			if onVacation == true {
 				log.Println("User on vacation, checking again later")
-				waitInterval = time.Hour * 24
+				waitInterval = longInterval
 			} else {
 				resp, err := ikukani.ReviewAvailable()
 				if err != nil {
@@ -122,16 +130,16 @@ var notifyReviewCmd = &cobra.Command{
 					}
 					log.Println("Message sid: " + sid)
 					sent = true
-					waitInterval = time.Minute * 30
+					waitInterval = shortInterval
 				} else if resp == true && sent == true {
 					log.Println("review available but incomplete, checking again later")
 				} else {
 					log.Println("review not available, checking again later")
-					nextReview, err := ikukani.NextReviewInDuration()
+					nextReview, err := ikukani.NextReviewIn()
 					if err != nil {
 						log.Fatal(err)
 					}
-					waitInterval = *nextReview
+					waitInterval = *nextReview + bufferInterval
 					sent = false
 				}
 			}
