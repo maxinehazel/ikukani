@@ -1,10 +1,7 @@
 project_name: ikukanibot
-gitea_urls:
-  api: https://git.maxinekrebs.dev/api/v1/
-  skip_tls_verify: false
 release:
-  gitea:
-    owner: softpunk
+  github:
+    owner: softpunks
     name: ikukani
 archives:
   - files:
