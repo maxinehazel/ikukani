@@ -7,9 +7,9 @@ import (
 	"os/signal"
 	"time"
 
-	"git.maxinekrebs.dev/softpunk/ikukani"
-	"git.maxinekrebs.dev/softpunk/ikukani/internal/notifier"
 	homedir "github.com/mitchellh/go-homedir"
+	"github.com/softpunks/ikukani"
+	"github.com/softpunks/ikukani/internal/notifier"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )

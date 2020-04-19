@@ -1,4 +1,4 @@
-module git.maxinekrebs.dev/softpunk/ikukani
+module github.com/softpunks/ikukani
 
 go 1.13
 
