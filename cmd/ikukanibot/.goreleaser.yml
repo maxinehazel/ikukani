@@ -1,8 +1,4 @@
 project_name: ikukanibot
-release:
-  github:
-    owner: softpunks
-    name: ikukani
 archives:
   - files:
       - none*
