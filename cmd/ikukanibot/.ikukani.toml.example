@@ -1,5 +1,1 @@
 wk_token = "WaniKani API Token"
-twilio_sid = "Twilio Account SID"
-twilio_token = "Twilio Account Token"
-twilio_from = "Phone Number to send messages from"
-twilio_to = "Phone number to send notifications to"
