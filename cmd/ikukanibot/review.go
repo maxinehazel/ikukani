@@ -29,7 +29,7 @@ var reviewCmd = &cobra.Command{
 
 var nextReviewCmd = &cobra.Command{
 	Use:   "in",
-	Short: "Print when the next review is availabe",
+	Short: "Print when the next review is available",
 	Run: func(cmd *cobra.Command, args []string) {
 		resp, err := ikukani.NextReviewInString()
 		if err != nil {
@@ -39,7 +39,7 @@ var nextReviewCmd = &cobra.Command{
 	},
 }
 
-var availabeReviewCmd = &cobra.Command{
+var availableReviewCmd = &cobra.Command{
 	Use:   "available",
 	Short: "Returns is there are any available reviews",
 	Run: func(cmd *cobra.Command, args []string) {
@@ -57,5 +57,5 @@ var availabeReviewCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(reviewCmd)
-	reviewCmd.AddCommand(nextReviewCmd, availabeReviewCmd)
+	reviewCmd.AddCommand(nextReviewCmd, availableReviewCmd)
 }
