@@ -58,7 +58,12 @@ func (r *request) send() (*Response, error) {
 		return nil, err
 	}
 
-	defer resp.Body.Close()
+	defer func() {
+		if deferErr := resp.Body.Close(); deferErr != nil {
+			err = deferErr
+		}
+	}()
+
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
