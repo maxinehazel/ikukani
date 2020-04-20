@@ -2,30 +2,18 @@ package main
 
 import (
 	"fmt"
-	"log"
-	"os"
-	"time"
-
 	"github.com/mitchellh/go-homedir"
 	"github.com/softpunks/ikukani"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-)
-
-const (
-	longInterval   = time.Hour * 24
-	shortInterval  = time.Minute * 30
-	bufferInterval = time.Second * 5
+	"log"
+	"os"
 )
 
 var (
 	// Used for flags.
 	cfgFile          string
 	waniKaniToken    string
-	twilioFromNumber string
-	twilioToNumber   string
-	twilioToken      string
-	twilioAccountSID string
 
 	rootCmd = &cobra.Command{
 		Use:   "ikukanibot",
@@ -44,7 +32,11 @@ func init() {
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.ikukani.yaml)")
 	rootCmd.PersistentFlags().StringVarP(&waniKaniToken, "token", "t", "", "WaniKani API v2 token (required)")
 
-	viper.BindPFlag("wk_token", rootCmd.PersistentFlags().Lookup("token"))
+	err := viper.BindPFlag("wk_token", rootCmd.PersistentFlags().Lookup("token"))
+
+	if err != nil {
+		log.Fatal(err)
+	}
 }
 
 func initConfig() {
