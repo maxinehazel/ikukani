@@ -11,11 +11,13 @@ import (
 )
 
 var reviewCmd = &cobra.Command{
-	Use:   "review",
+	Use:   "reviews",
 	Short: "interact with review data",
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
-		ikukani.Token = viper.GetString("wk_token")
-		vacation, err := ikukani.VacationMode()
+		apiToken := viper.GetString("wk_token")
+		wkClient = ikukani.NewClient(apiToken, apiVersion)
+
+		vacation, err := wkClient.VacationMode()
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -27,11 +29,23 @@ var reviewCmd = &cobra.Command{
 	},
 }
 
+var getReviewsCmd = &cobra.Command{
+	Use:   "list",
+	Short: "Print all reviews",
+	Run: func(cmd *cobra.Command, args []string) {
+		resp, err := wkClient.GetReviews()
+		if err != nil {
+			log.Fatal(err)
+		}
+		fmt.Println(resp)
+	},
+}
+
 var nextReviewCmd = &cobra.Command{
 	Use:   "in",
 	Short: "Print when the next review is available",
 	Run: func(cmd *cobra.Command, args []string) {
-		resp, err := ikukani.NextReviewInString()
+		resp, err := wkClient.NextReviewInString()
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -43,7 +57,7 @@ var availableReviewCmd = &cobra.Command{
 	Use:   "available",
 	Short: "Returns is there are any available reviews",
 	Run: func(cmd *cobra.Command, args []string) {
-		resp, err := ikukani.ReviewAvailable()
+		resp, err := wkClient.ReviewAvailable()
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -57,5 +71,5 @@ var availableReviewCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(reviewCmd)
-	reviewCmd.AddCommand(nextReviewCmd, availableReviewCmd)
+	reviewCmd.AddCommand(nextReviewCmd, availableReviewCmd, getReviewsCmd)
 }

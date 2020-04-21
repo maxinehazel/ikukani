@@ -10,16 +10,24 @@ import (
 	"os"
 )
 
+const (
+	apiVersion = "20170710"
+)
+
 var (
 	// Used for flags.
-	cfgFile          string
-	waniKaniToken    string
+	cfgFile       string
+	waniKaniToken string
+
+	// Client for making requests to wk api
+	wkClient      *ikukani.Client
 
 	rootCmd = &cobra.Command{
 		Use:   "ikukanibot",
 		Short: "cli for interfacing with the WaniKani API",
 		PersistentPreRun: func(cmd *cobra.Command, args []string) {
-			ikukani.Token = viper.GetString("wk_token")
+			apiToken := viper.GetString("wk_token")
+			wkClient = ikukani.NewClient(apiToken, apiVersion)
 		},
 	}
 )
