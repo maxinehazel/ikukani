@@ -2,12 +2,13 @@ package main
 
 import (
 	"fmt"
+	"log"
+	"os"
+
 	"github.com/mitchellh/go-homedir"
 	"github.com/softpunks/ikukani"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"log"
-	"os"
 )
 
 const (
@@ -20,7 +21,7 @@ var (
 	waniKaniToken string
 
 	// Client for making requests to wk api
-	wkClient      *ikukani.Client
+	wkClient *ikukani.Client
 
 	rootCmd = &cobra.Command{
 		Use:   "ikukanibot",

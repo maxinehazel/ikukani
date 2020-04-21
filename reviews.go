@@ -9,7 +9,7 @@ type ReviewResponse struct {
 	Object        string `json:"object"`
 	URL           string `json:"url"`
 	DataUpdatedAt string `json:"data_updated_at"`
-	Data          Review   `json:"data"`
+	Data          Review `json:"data"`
 }
 
 type Review struct {

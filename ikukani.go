@@ -25,7 +25,6 @@ func NewClient(token string, apiVersion string) *Client {
 	return &client
 }
 
-
 type request struct {
 	endpoint string
 	method   string
